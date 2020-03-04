@@ -49,6 +49,8 @@ request.get(
     if (statCode === 401)
         refreshToken();
     //fs.writeFile("memes.html", res);
+    if (!res.body)
+      return;
     var Jayson = JSON.parse(res.body);
     var SongName = Jayson.item.name;
     var Artist = Jayson.item.artists[0];
