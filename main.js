@@ -13,30 +13,6 @@ scopes = "user-read-currently-playing";
 
 function refreshToken(){
 
-// requesting access token from refresh token
- var authOptions = {
-   url: 'https://accounts.spotify.com/api/token',
-   headers: { 'Authorization': 'Basic ' + (new Buffer(clientid + ':' + clientsecret).toString('base64')) },
-   form: {
-     grant_type: 'refresh_token',
-     refresh_token: refresh_token
-   },
-   json: true
- };
- console.log('does this get called');
-
- request.post(authOptions, function(error, response, body) {
-   console.log(response.statusCode + 'for token refresh');
-    if (!error && response.statusCode === 200) {
-     access_token = body.access_token;
-     res.send({
-       'access_token': access_token
-     });
-   }
- });
- fs.writeFile('AccessToken.txt', access_token);
-}
-
 request.post(
     {
         url: 'https://accounts.spotify.com/api/token',
@@ -56,7 +32,7 @@ request.post(
         fs.writeFile('AccessToken.txt', access_token);
 
     }
-)
+)};
 
 function getTrack(){
 request.get(
