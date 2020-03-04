@@ -1,0 +1,28 @@
+{
+  "name": "spotvideoplayer",
+  "version": "0.0.1",
+  "description": "THings and stuff",
+  "main": "app.js",
+  "dependencies": {
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "open": "^7.0.2",
+    "querystring": "^0.2.0",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PowerSlaveAlfons/SpotVideoPlayer.git"
+  },
+  "author": "Stefan ALfons",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PowerSlaveAlfons/SpotVideoPlayer/issues"
+  },
+  "homepage": "https://github.com/PowerSlaveAlfons/SpotVideoPlayer#readme"
+}

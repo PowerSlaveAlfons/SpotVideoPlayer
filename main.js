@@ -1,15 +1,25 @@
 var request = require("request"); // "Request" library
 var fs = require("fs");
-var access_token =
-  fs.readFileSync('AccessToken.txt');
-var refresh_token =
-  fs.readFileSync('RefreshToken.txt');
+require('dotenv').config();
+
+
+var access_token ='';
+var refresh_token = process.env.refresh_token;
 var LastSongName = "";
 
-clientid = fs.readFileSync('ClientID.txt');
-clientsecret = fs.readFileSync('ClientSecret.txt');
+clientid = process.env.clientid;
+clientsecret = process.env.clientsecret;
 redirecturi = "http://localhost:8888/callback";
 scopes = "user-read-currently-playing";
+
+var open = require('open');
+
+var apikey = process.env.apikey;
+ 
+var opts = {
+  maxResults: 10,
+  key: apikey
+};
 
 function refreshToken(){
 
@@ -21,14 +31,18 @@ request.post(
             grant_type: 'refresh_token',
             refresh_token: refresh_token
         }
+
     },
     function test(err, res) {
+      console.log(process.env.clientid)
+      console.log(res.body);
         var test = JSON.parse(res.body);
         var testerino = '123';
-        //console.log(JSON.stringify(test));
-        console.log("what");
+        console.log(JSON.stringify(test));
+        console.log(clientid);
         //fs.writeFile("memes.html", JSON.stringify(res.body));
         access_token = test.access_token;
+        process.env.access_token = access_token;
         fs.writeFile('AccessToken.txt', access_token);
 
     }
@@ -45,7 +59,12 @@ request.get(
     headers: { Authorization: "Bearer " + access_token }
   },
   function getTrack(err, res) {
-    var statCode = res.statusCode;
+    if (err)
+    {
+      console.log('no response');
+      return;
+    }
+      var statCode = res.statusCode;
     if (statCode === 401)
         refreshToken();
     //fs.writeFile("memes.html", res);
@@ -59,8 +78,30 @@ request.get(
         return;
     LastSongName = SongName;
     console.log(SongName);
+    getVideo(SongName);
+
   }
 );
 }
 
+function getVideo(title)
+{
+request.get(
+  {
+    url: "https://www.googleapis.com/youtube/v3/search",
+    qs:{part: "snippet", key: apikey, q:title}
+  },
+  function getTrack(err, res) {
+    if (err)
+      return;
+    var bod = JSON.parse(res.body);
+    console.log(bod.items[0].id.videoId);
+    var id = bod.items[0].id.videoId;
+    open('https://youtu.be/' +  id);
+
+  }
+);
+}
+
+refreshToken();
 setInterval(getTrack, 1000);
