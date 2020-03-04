@@ -1,3 +1,5 @@
+/* this for now is just a reference document to get an idea how to do the auth process; Actual logic is in the main.js" */
+
 /**
  * This is an example of a basic node.js script that performs
  * the Authorization Code oAuth2 flow to authenticate against
@@ -12,6 +14,10 @@ var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
+
+var client_id = 'no';
+var client_secret = 'no';
+var redirect_uri = 'no';
 
 
 
@@ -100,6 +106,7 @@ function getTrack() {
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
           console.log(body.item.id);
+          console.log(refresh_token);
         });
 
         // we can also pass the token to the browser to make requests from there
