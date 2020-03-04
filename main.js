@@ -1,8 +1,63 @@
 var request = require("request"); // "Request" library
 var fs = require("fs");
-
-
+var access_token =
+  fs.readFileSync('AccessToken.txt');
+var refresh_token =
+  fs.readFileSync('RefreshToken.txt');
 var LastSongName = "";
+
+clientid = fs.readFileSync('ClientID.txt');
+clientsecret = fs.readFileSync('ClientSecret.txt');
+redirecturi = "http://localhost:8888/callback";
+scopes = "user-read-currently-playing";
+
+function refreshToken(){
+
+// requesting access token from refresh token
+ var authOptions = {
+   url: 'https://accounts.spotify.com/api/token',
+   headers: { 'Authorization': 'Basic ' + (new Buffer(clientid + ':' + clientsecret).toString('base64')) },
+   form: {
+     grant_type: 'refresh_token',
+     refresh_token: refresh_token
+   },
+   json: true
+ };
+ console.log('does this get called');
+
+ request.post(authOptions, function(error, response, body) {
+   console.log(response.statusCode + 'for token refresh');
+    if (!error && response.statusCode === 200) {
+     access_token = body.access_token;
+     res.send({
+       'access_token': access_token
+     });
+   }
+ });
+ fs.writeFile('AccessToken.txt', access_token);
+}
+
+request.post(
+    {
+        url: 'https://accounts.spotify.com/api/token',
+        headers: { 'Authorization': 'Basic ' + (new Buffer(clientid + ':' + clientsecret).toString('base64')) },
+        form: {
+            grant_type: 'refresh_token',
+            refresh_token: refresh_token
+        }
+    },
+    function test(err, res) {
+        var test = JSON.parse(res.body);
+        var testerino = '123';
+        //console.log(JSON.stringify(test));
+        console.log("what");
+        //fs.writeFile("memes.html", JSON.stringify(res.body));
+        access_token = test.access_token;
+        fs.writeFile('AccessToken.txt', access_token);
+
+    }
+)
+
 function getTrack(){
 request.get(
   {
@@ -14,7 +69,10 @@ request.get(
     headers: { Authorization: "Bearer " + access_token }
   },
   function getTrack(err, res) {
-    fs.writeFile("memes.html", res.body);
+    var statCode = res.statusCode;
+    if (statCode === 401)
+        refreshToken();
+    //fs.writeFile("memes.html", res);
     var Jayson = JSON.parse(res.body);
     var SongName = Jayson.item.name;
     var Artist = Jayson.item.artists[0];
